@@ -32,7 +32,7 @@ jobs:
 
       - name: Onboard repository
         run: 
-          uv run src/create-repo.py
+          uv run src/onboard_repository.py
         env:
           SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
