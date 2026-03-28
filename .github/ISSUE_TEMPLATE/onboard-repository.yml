@@ -22,5 +22,3 @@ body:
       project-descriptive-repository-name, e. g. `ml-llm`, `frontend-chat`.
   validations:
     required: true
-- type: input
-  id: repository_description
