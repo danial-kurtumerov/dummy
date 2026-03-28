@@ -1,7 +1,14 @@
+from json import dumps
 from re import match
+from typing import TYPE_CHECKING
+
+from github import Github
 
 from src.domain.exceptions import IssueBodyParseError, RepositoryNameValidationError
 from src.domain.value_objects import RepositoryInformationValueObject
+
+if TYPE_CHECKING:
+    from github.Issue import Issue
 
 
 class RepositoryInformationExtractorGateway:
@@ -44,3 +51,17 @@ class RepositoryInformationExtractorGateway:
         if name.startswith(".") or name.endswith("."):
             msg = "Name can't start or end with dot."
             raise RepositoryNameValidationError(msg)
+
+
+class IssueMessageSenderGateway:
+
+    def __init__(
+        self,
+        repository_name: str,
+        issue_number: int,
+        token: str,
+    ) -> None:
+        self._issue: Issue = Github(token).get_repo(repository_name).get_issue(issue_number)
+
+    async def execute(self, message: dict[str, str]) -> None:
+        self._issue.create_comment(f"```json\n{dumps(message, ensure_ascii=False, indent=4)}\n```")

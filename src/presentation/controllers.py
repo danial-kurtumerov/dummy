@@ -2,7 +2,7 @@ from asyncio import run
 from os import environ
 
 from src.application.use_cases import OnboardRepositoryUseCase
-from src.infrastructure.gateways import RepositoryInformationExtractorGateway
+from src.infrastructure.gateways import IssueMessageSenderGateway, RepositoryInformationExtractorGateway
 
 
 class CommandLineInterfaceController:
@@ -19,6 +19,11 @@ class CommandLineInterfaceController:
 if __name__ == "__main__":
     app: CommandLineInterfaceController = CommandLineInterfaceController(
         onboard_repository_use_case=OnboardRepositoryUseCase(
+            issue_message_sender=IssueMessageSenderGateway(
+                repository_name=environ.get("REPO_NAME", ""),
+                issue_number=int(environ.get("CREATE_REPO_NUMBER", "0")),
+                token=environ.get("GITHUB_TOKEN", ""),
+            ),
             repository_information=RepositoryInformationExtractorGateway(),
         ),
     )
