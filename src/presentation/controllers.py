@@ -19,7 +19,7 @@ class CommandLineInterfaceController:
 if __name__ == "__main__":
     app: CommandLineInterfaceController = CommandLineInterfaceController(
         onboard_repository_use_case=OnboardRepositoryUseCase(
-            repository_information=RepositoryInformationExtractorGateway,
+            repository_information=RepositoryInformationExtractorGateway(),
         ),
     )
 

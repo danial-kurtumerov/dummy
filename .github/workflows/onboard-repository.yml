@@ -32,7 +32,7 @@ jobs:
 
       - name: Onboard repository
         run: 
-          uv run ./src/presentation/controllers/command_line_interface.py --no-dev
+          uv run -m src.presentation.controllers --no-dev
         env:
           SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
