@@ -1,0 +1,26 @@
+name: Onboard repository
+description: Onboard repository onto system
+title: Request to onboard repository onto system
+
+labels:
+- onboard-repository
+
+assignees:
+- danial-kurtumerov-work
+
+body:
+- type: markdown
+  attributes:
+    value: For github organization my-company
+- type: input
+  id: repository_name
+  attributes:
+    label: Repository name
+    description: |
+      Name of the existing repository to onboard onto system. Don't use spaces
+      in names. Follow naming convention: department-application or
+      project-descriptive-repository-name, e. g. `ml-llm`, `frontend-chat`.
+  validations:
+    required: true
+- type: input
+  id: repository_description

@@ -1,0 +1,38 @@
+name: "onboard-repository"
+
+on:
+  issues:
+    types: [opened, reopened, edited]
+
+jobs:
+  onboard-repository:
+    name: "onboard-repository"
+    runs-on: ['ubuntu-24.04']
+
+    env:
+      CREATE_REPO_EVENT: ${{ github.event_name }}
+      CREATE_REPO_TITLE: ${{ github.event.issue.title }}
+      CREATE_REPO_NUMBER: ${{ github.event.issue.number }}
+      CREATE_REPO_MESSAGE: ${{ github.event.issue.body }}
+      ISSUE_REPO_URL: ${{ github.event.issue.repository_url }}
+      REPO_NAME: ${{ github.event.repository.full_name }}
+      REPO_URL: ${{ github.event.repository.url }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    if: contains(github.event.issue.labels.*.name, 'onboard-repository')
+
+    steps:    
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.2"
+
+      - name: Onboard repository
+        run: 
+          uv run src/create-repo.py
+        env:
+          SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
