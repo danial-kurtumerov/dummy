@@ -21,18 +21,28 @@ jobs:
 
     if: contains(github.event.issue.labels.*.name, 'onboard-repository')
 
-    steps:    
+    steps:
+
+      - name: Get token
+        id: github-app
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.APPLICATION_ID }}
+          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}
+          organization: ${{ secrets.APPLICATION_ORGANIZATION }}
+
       - name: Checkout
         uses: actions/checkout@v6
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
           version: "0.11.2"
 
       - name: Onboard repository
-        run: 
+        run:
           uv run -m src.presentation.controllers --no-dev
         env:
+          GITHUB_TOKEN: ${{ steps.github-app.outputs.token }}
           SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
