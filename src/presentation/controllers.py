@@ -21,7 +21,7 @@ if __name__ == "__main__":
         onboard_repository_use_case=OnboardRepositoryUseCase(
             issue_message_sender=IssueMessageSenderGateway(
                 repository_name=environ.get("REPO_NAME", ""),
-                issue_number=int(environ.get("CREATE_REPO_NUMBER", "0")),
+                issue_number=int(environ.get("ONBOARD_REPO_NUMBER", "0")),
                 token=environ.get("GITHUB_TOKEN", ""),
             ),
             repository_information=RepositoryInformationExtractorGateway(),
