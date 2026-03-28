@@ -35,6 +35,5 @@ jobs:
         run:
           uv run -m src.presentation.controllers --no-dev
         env:
-          GITHUB_TOKEN: ${{ steps.github-app.outputs.token }}
           SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
           SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
