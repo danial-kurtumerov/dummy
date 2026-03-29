@@ -3,3 +3,6 @@ class IssueBodyParseError(BaseException):
 
 class RepositoryNameValidationError(BaseException):
     ...
+
+class RepositoryDoesNotExistError(BaseException):
+    ...

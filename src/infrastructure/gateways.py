@@ -2,9 +2,9 @@ from json import dumps
 from re import match
 from typing import TYPE_CHECKING
 
-from github import Github
+from github import Github, GithubException
 
-from src.domain.exceptions import IssueBodyParseError, RepositoryNameValidationError
+from src.domain.exceptions import IssueBodyParseError, RepositoryDoesNotExistError, RepositoryNameValidationError
 from src.domain.value_objects import RepositoryInformationValueObject
 
 if TYPE_CHECKING:
@@ -51,6 +51,29 @@ class RepositoryInformationExtractorGateway:
         if name.startswith(".") or name.endswith("."):
             msg = "Name can't start or end with dot."
             raise RepositoryNameValidationError(msg)
+
+
+class CheckRepositoryExistenceGateway:
+
+    _organization: str = "danial-kurtumerov"
+    _not_found_status: int = 404
+
+    def __init__(
+        self,
+        token: str,
+    ) -> None:
+        self._github: Github = Github(token)
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        path: str = f"{self._organization}/{repository_information_value_object.name}"
+
+        try:
+            self._github.get_repo(path)
+
+        except GithubException as exception:
+            if exception.status == self._not_found_status:
+                msg: str = f"Can't find [{path}] repository."
+                raise RepositoryDoesNotExistError(msg) from exception
 
 
 class IssueMessageSenderGateway:

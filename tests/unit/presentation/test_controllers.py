@@ -3,7 +3,12 @@ import pytest
 from src.application.use_cases import OnboardRepositoryUseCase
 from src.infrastructure.gateways import RepositoryInformationExtractorGateway
 from src.presentation.controllers import CommandLineInterfaceController
-from tests.mocks.gateways import CloseIssueMock, IssueMessageSenderMock
+from tests.mocks.gateways import CheckRepositoryExistenceMock, CloseIssueMock, IssueMessageSenderMock
+
+
+@pytest.fixture
+def check_repository_existence() -> CheckRepositoryExistenceMock:
+    return CheckRepositoryExistenceMock("mock-token")
 
 
 @pytest.fixture
@@ -18,11 +23,13 @@ def close_issue() -> CloseIssueMock:
 
 @pytest.fixture
 def command_line_interface_controller(
+    check_repository_existence: CheckRepositoryExistenceMock,
     issue_message_sender: IssueMessageSenderMock,
     close_issue: CloseIssueMock,
 ) -> CommandLineInterfaceController:
     return CommandLineInterfaceController(
         onboard_repository_use_case=OnboardRepositoryUseCase(
+            check_repository_existence=check_repository_existence,
             issue_message_sender=issue_message_sender,
             close_issue=close_issue,
             repository_information=RepositoryInformationExtractorGateway(),
@@ -31,12 +38,23 @@ def command_line_interface_controller(
 
 
 @pytest.mark.parametrize(
-    argnames=("issue_body", "expected_result", "is_issue_closed"),
+    argnames=("issue_body", "expected_result", "repository_exists", "is_issue_closed"),
     argvalues=[
         (
             "### Repository name\n\nmy-repository\n",
             {"result": "finished successfully", "repository": "my-repository"},
             True,
+            True,
+        ),
+        (
+            "### Repository name\n\nmy-repository-2\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryDoesNotExistError",
+                "context": "Can't find [mock/my-repository-2] repository.",
+            },
+            False,
+            False,
         ),
         (
             "### Repository name",
@@ -45,6 +63,7 @@ def command_line_interface_controller(
                 "error": "IssueBodyParseError",
                 "context": "Can't find required parameters.",
             },
+            False,
             False,
         ),
         (
@@ -55,17 +74,32 @@ def command_line_interface_controller(
                 "context": "Name can't start or end with dot.",
             },
             False,
+            False,
+        ),
+        (
+            "### Repository name\n\nmy-repository; sudo rm -rf /\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryNameValidationError",
+                "context": "Name can only contain letters, digits, hyphens, underscores and dots.",
+            },
+            False,
+            False,
         ),
     ],
 )
 def test_command_line_interface_controller_call(  # noqa: PLR0913
     issue_body: str,
     expected_result: dict[str, str],
+    repository_exists: bool,  # noqa: FBT001
     is_issue_closed: bool,  # noqa: FBT001
+    check_repository_existence: CheckRepositoryExistenceMock,
     issue_message_sender: IssueMessageSenderMock,
     close_issue: CloseIssueMock,
     command_line_interface_controller: CommandLineInterfaceController,
 ) -> None:
+    check_repository_existence.result = repository_exists
+
     command_line_interface_controller(issue_body)
 
     assert issue_message_sender.result == expected_result

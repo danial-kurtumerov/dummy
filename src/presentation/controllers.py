@@ -3,6 +3,7 @@ from os import environ
 
 from src.application.use_cases import OnboardRepositoryUseCase
 from src.infrastructure.gateways import (
+    CheckRepositoryExistenceGateway,
     CloseIssueGateway,
     IssueMessageSenderGateway,
     RepositoryInformationExtractorGateway,
@@ -28,6 +29,7 @@ if __name__ == "__main__":
 
     app: CommandLineInterfaceController = CommandLineInterfaceController(
         onboard_repository_use_case=OnboardRepositoryUseCase(
+            check_repository_existence=CheckRepositoryExistenceGateway(token),
             issue_message_sender=IssueMessageSenderGateway(repository_name, issue_number, token),
             close_issue=CloseIssueGateway(repository_name, issue_number, token),
             repository_information=RepositoryInformationExtractorGateway(),

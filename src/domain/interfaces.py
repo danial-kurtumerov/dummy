@@ -10,6 +10,12 @@ class RepositoryInformationExtractorInterface(Protocol):
         ...
 
 
+class CheckRepositoryExistenceInterface(Protocol):
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        ...
+
+
 class IssueMessageSenderInterface(Protocol):
 
     async def execute(self, message: dict[str, str]) -> None:
