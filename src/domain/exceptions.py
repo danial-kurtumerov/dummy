@@ -1,7 +1,7 @@
 class IssueBodyParseError(BaseException):
     ...
 
-class RepositoryNameValidationError(BaseException):
+class RepositoryInformationValidationError(BaseException):
     ...
 
 class RepositoryDoesNotExistError(BaseException):

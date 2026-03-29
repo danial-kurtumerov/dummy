@@ -1,13 +1,14 @@
 from typing import TYPE_CHECKING
 
-from src.domain.exceptions import IssueBodyParseError, RepositoryDoesNotExistError, RepositoryNameValidationError
+from src.domain.exceptions import IssueBodyParseError, RepositoryDoesNotExistError, RepositoryInformationValidationError
 
 if TYPE_CHECKING:
     from src.domain.interfaces import (
         CheckRepositoryExistenceInterface,
         CloseIssueInterface,
         IssueMessageSenderInterface,
-        RepositoryInformationExtractorInterface,
+        RepositoryInformationParserInterface,
+        RepositoryInformationValidatorInterface,
     )
     from src.domain.value_objects import RepositoryInformationValueObject
 
@@ -19,44 +20,52 @@ class OnboardRepositoryUseCase:
         check_repository_existence: CheckRepositoryExistenceInterface,
         issue_message_sender: IssueMessageSenderInterface,
         close_issue: CloseIssueInterface,
-        repository_information: RepositoryInformationExtractorInterface,
+        repository_information_parser: RepositoryInformationParserInterface,
+        repository_information_validator: RepositoryInformationValidatorInterface,
     ) -> None:
         self._check_repository_existence: CheckRepositoryExistenceInterface = check_repository_existence
         self._issue_message_sender: IssueMessageSenderInterface = issue_message_sender
         self._close_issue: CloseIssueInterface = close_issue
-        self._repository_information: RepositoryInformationExtractorInterface = repository_information
+        self._repository_information_parser: RepositoryInformationParserInterface = repository_information_parser
+        self._repository_information_validator: RepositoryInformationValidatorInterface = (
+            repository_information_validator
+        )
 
     async def execute(self, issue_body: str) -> None:
         try:
-            repository_information: RepositoryInformationValueObject = await self._repository_information.execute(
+            repo_information: RepositoryInformationValueObject = await self._repository_information_parser.execute(
                 issue_body=issue_body,
             )
 
-        except (IssueBodyParseError, RepositoryNameValidationError) as exception:
-            await self._issue_message_sender.execute({
-                "result": "caught expected error",
-                "error": exception.__class__.__name__,
-                "context": str(exception),
-            })
-
+        except IssueBodyParseError as exception:
+            await self._send_error_message_to_issue(exception)
             return
 
-        if repository_information:
+        try:
+            await self._repository_information_validator.execute(repo_information)
+
+        except RepositoryInformationValidationError as exception:
+            await self._send_error_message_to_issue(exception)
+            return
+
+        if repo_information:
             try:
-                await self._check_repository_existence.execute(repository_information)
+                await self._check_repository_existence.execute(repo_information)
 
             except RepositoryDoesNotExistError as exception:
-                await self._issue_message_sender.execute({
-                    "result": "caught expected error",
-                    "error": exception.__class__.__name__,
-                    "context": str(exception),
-                })
-
+                await self._send_error_message_to_issue(exception)
                 return
 
             await self._issue_message_sender.execute({
                 "result": "finished successfully",
-                "repository": repository_information.name,
+                "repository": repo_information.name,
             })
 
         await self._close_issue.execute()
+
+    async def _send_error_message_to_issue(self, exception: BaseException) -> None:
+        await self._issue_message_sender.execute({
+            "result": "caught expected error",
+            "error": exception.__class__.__name__,
+            "context": str(exception),
+        })

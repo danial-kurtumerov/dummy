@@ -1,7 +1,7 @@
 import pytest
 
 from src.application.use_cases import OnboardRepositoryUseCase
-from src.infrastructure.gateways import RepositoryInformationExtractorGateway
+from src.infrastructure.gateways import RepositoryInformationParserGateway, RepositoryInformationValidatorGateway
 from src.presentation.controllers import CommandLineInterfaceController
 from tests.mocks.gateways import CheckRepositoryExistenceMock, CloseIssueMock, IssueMessageSenderMock
 
@@ -32,7 +32,8 @@ def command_line_interface_controller(
             check_repository_existence=check_repository_existence,
             issue_message_sender=issue_message_sender,
             close_issue=close_issue,
-            repository_information=RepositoryInformationExtractorGateway(),
+            repository_information_parser=RepositoryInformationParserGateway(),
+            repository_information_validator=RepositoryInformationValidatorGateway(),
         ),
     )
 
@@ -61,7 +62,7 @@ def command_line_interface_controller(
             {
                 "result": "caught expected error",
                 "error": "IssueBodyParseError",
-                "context": "Can't find required parameters.",
+                "context": "Can't find repository name in issue body.",
             },
             False,
             False,
@@ -70,7 +71,7 @@ def command_line_interface_controller(
             "### Repository name\n\nmy-repository.\n",
             {
                 "result": "caught expected error",
-                "error": "RepositoryNameValidationError",
+                "error": "RepositoryInformationValidationError",
                 "context": "Name can't start or end with dot.",
             },
             False,
@@ -80,7 +81,7 @@ def command_line_interface_controller(
             "### Repository name\n\nmy-repository; sudo rm -rf /\n",
             {
                 "result": "caught expected error",
-                "error": "RepositoryNameValidationError",
+                "error": "RepositoryInformationValidationError",
                 "context": "Name can only contain letters, digits, hyphens, underscores and dots.",
             },
             False,

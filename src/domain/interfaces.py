@@ -4,9 +4,15 @@ if TYPE_CHECKING:
     from src.domain.value_objects import RepositoryInformationValueObject
 
 
-class RepositoryInformationExtractorInterface(Protocol):
+class RepositoryInformationParserInterface(Protocol):
 
     async def execute(self, issue_body: str) -> RepositoryInformationValueObject:
+        ...
+
+
+class RepositoryInformationValidatorInterface(Protocol):
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
         ...
 
 

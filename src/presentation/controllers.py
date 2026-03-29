@@ -6,7 +6,8 @@ from src.infrastructure.gateways import (
     CheckRepositoryExistenceGateway,
     CloseIssueGateway,
     IssueMessageSenderGateway,
-    RepositoryInformationExtractorGateway,
+    RepositoryInformationParserGateway,
+    RepositoryInformationValidatorGateway,
 )
 
 
@@ -32,7 +33,8 @@ if __name__ == "__main__":
             check_repository_existence=CheckRepositoryExistenceGateway(token),
             issue_message_sender=IssueMessageSenderGateway(repository_name, issue_number, token),
             close_issue=CloseIssueGateway(repository_name, issue_number, token),
-            repository_information=RepositoryInformationExtractorGateway(),
+            repository_information_parser=RepositoryInformationParserGateway(),
+            repository_information_validator=RepositoryInformationValidatorGateway(),
         ),
     )
 
