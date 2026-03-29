@@ -74,3 +74,17 @@ class CloseIssueMock:
     @property
     def result(self) -> bool:
         return self._result
+
+
+class AWSUpdaterMock:
+
+    def __init__(self) -> None:
+        self._result: bool = False
+
+    @property
+    def result(self) -> bool:
+        return self._result
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        if repository_information_value_object:
+            self._result = True

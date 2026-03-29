@@ -111,3 +111,9 @@ class CloseIssueGateway:
 
     async def execute(self) -> None:
         self._issue.edit(state=self._state)
+
+class AWSUpdaterGateway:
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        if repository_information_value_object:
+            ...

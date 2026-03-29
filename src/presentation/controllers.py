@@ -3,6 +3,7 @@ from os import environ
 
 from src.application.use_cases import OnboardRepositoryUseCase
 from src.infrastructure.gateways import (
+    AWSUpdaterGateway,
     CheckRepositoryExistenceGateway,
     CloseIssueGateway,
     IssueMessageSenderGateway,
@@ -35,6 +36,7 @@ if __name__ == "__main__":
             close_issue=CloseIssueGateway(repository_name, issue_number, token),
             repository_information_parser=RepositoryInformationParserGateway(),
             repository_information_validator=RepositoryInformationValidatorGateway(),
+            aws_updater=AWSUpdaterGateway(),
         ),
     )
 

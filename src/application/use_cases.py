@@ -4,6 +4,7 @@ from src.domain.exceptions import IssueBodyParseError, RepositoryDoesNotExistErr
 
 if TYPE_CHECKING:
     from src.domain.interfaces import (
+        AWSUpdaterInterface,
         CheckRepositoryExistenceInterface,
         CloseIssueInterface,
         IssueMessageSenderInterface,
@@ -15,13 +16,14 @@ if TYPE_CHECKING:
 
 class OnboardRepositoryUseCase:
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         check_repository_existence: CheckRepositoryExistenceInterface,
         issue_message_sender: IssueMessageSenderInterface,
         close_issue: CloseIssueInterface,
         repository_information_parser: RepositoryInformationParserInterface,
         repository_information_validator: RepositoryInformationValidatorInterface,
+        aws_updater: AWSUpdaterInterface,
     ) -> None:
         self._check_repository_existence: CheckRepositoryExistenceInterface = check_repository_existence
         self._issue_message_sender: IssueMessageSenderInterface = issue_message_sender
@@ -30,6 +32,7 @@ class OnboardRepositoryUseCase:
         self._repository_information_validator: RepositoryInformationValidatorInterface = (
             repository_information_validator
         )
+        self._aws_updater: AWSUpdaterInterface = aws_updater
 
     async def execute(self, issue_body: str) -> None:
         try:
@@ -56,6 +59,7 @@ class OnboardRepositoryUseCase:
                 await self._send_error_message_to_issue(exception)
                 return
 
+            await self._aws_updater.execute(repo_information)
             await self._issue_message_sender.execute({
                 "result": "finished successfully",
                 "repository": repo_information.name,

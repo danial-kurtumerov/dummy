@@ -31,3 +31,9 @@ class CloseIssueInterface(Protocol):
 
     async def execute(self) -> None:
         ...
+
+
+class AWSUpdaterInterface(Protocol):
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        ...
