@@ -14,3 +14,8 @@ class IssueMessageSenderInterface(Protocol):
 
     async def execute(self, message: dict[str, str]) -> None:
         ...
+
+class CloseIssueInterface(Protocol):
+
+    async def execute(self) -> None:
+        ...

@@ -65,3 +65,19 @@ class IssueMessageSenderGateway:
 
     async def execute(self, message: dict[str, str]) -> None:
         self._issue.create_comment(f"```json\n{dumps(message, ensure_ascii=False, indent=4)}\n```")
+
+
+class CloseIssueGateway:
+
+    _state: str = "closed"
+
+    def __init__(
+        self,
+        repository_name: str,
+        issue_number: int,
+        token: str,
+    ) -> None:
+        self._issue: Issue = Github(token).get_repo(repository_name).get_issue(issue_number)
+
+    async def execute(self) -> None:
+        self._issue.edit(state=self._state)
