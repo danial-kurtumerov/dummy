@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 
 class OnboardRepositoryUseCase:
-
     def __init__(  # noqa: PLR0913
         self,
         check_repository_existence: CheckRepositoryExistenceInterface,
@@ -60,16 +59,20 @@ class OnboardRepositoryUseCase:
                 return
 
             await self._aws_updater.execute(repo_information)
-            await self._issue_message_sender.execute({
-                "result": "finished successfully",
-                "repository": repo_information.name,
-            })
+            await self._issue_message_sender.execute(
+                {
+                    "result": "finished successfully",
+                    "repository": repo_information.name,
+                },
+            )
 
         await self._close_issue.execute()
 
     async def _send_error_message_to_issue(self, exception: BaseException) -> None:
-        await self._issue_message_sender.execute({
-            "result": "caught expected error",
-            "error": exception.__class__.__name__,
-            "context": str(exception),
-        })
+        await self._issue_message_sender.execute(
+            {
+                "result": "caught expected error",
+                "error": exception.__class__.__name__,
+                "context": str(exception),
+            },
+        )

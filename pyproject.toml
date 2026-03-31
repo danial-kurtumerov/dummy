@@ -19,5 +19,5 @@ dev = [
 
 [tool.ruff]
 lint.select = ["ALL"]
-lint.ignore = ["D", "S101"]
+lint.ignore = ["COM812", "D", "S101"]
 line-length = 120

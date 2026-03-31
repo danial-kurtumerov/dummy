@@ -20,6 +20,7 @@ def issue_message_sender() -> IssueMessageSenderMock:
 def close_issue() -> CloseIssueMock:
     return CloseIssueMock("mock-repository", 1, "mock-token")
 
+
 @pytest.fixture
 def aws_updater() -> AWSUpdaterMock:
     return AWSUpdaterMock()
@@ -58,44 +59,192 @@ def command_line_interface_controller(
             True,
         ),
         (
-            "### Repository name\n\nmy-repository-2\n",
+            "### Repository name\n\nmy_repository\n",
             {
-                "result": "caught expected error",
-                "error": "RepositoryDoesNotExistError",
-                "context": "Can't find [mock/my-repository-2] repository.",
+                "result": "finished successfully",
+                "repository": "my_repository",
             },
-            False,
-            False,
-            False,
+            True,
+            True,
+            True,
         ),
         (
-            "### Repository name",
+            "### Repository name\n\nmy.repository\n",
+            {
+                "result": "finished successfully",
+                "repository": "my.repository",
+            },
+            True,
+            True,
+            True,
+        ),
+        (
+            "### Repository name\n\nMyRepository1\n",
+            {
+                "result": "finished successfully",
+                "repository": "MyRepository1",
+            },
+            True,
+            True,
+            True,
+        ),
+        (
+            "### Repository name\n\nmy-repository",
+            {
+                "result": "finished successfully",
+                "repository": "my-repository",
+            },
+            True,
+            True,
+            True,
+        ),
+        (
+            "### Repository name\n\na\n",
+            {
+                "result": "finished successfully",
+                "repository": "a",
+            },
+            True,
+            True,
+            True,
+        ),
+        (
+            "### Repository name\n\n12345\n",
+            {
+                "result": "finished successfully",
+                "repository": "12345",
+            },
+            True,
+            True,
+            True,
+        ),
+        (
+            "### Repository name\nmy repo",
             {
                 "result": "caught expected error",
                 "error": "IssueBodyParseError",
                 "context": "Can't find repository name in issue body.",
             },
-            False,
+            True,
             False,
             False,
         ),
         (
-            "### Repository name\n\nmy-repository.\n",
+            "my repo",
+            {
+                "result": "caught expected error",
+                "error": "IssueBodyParseError",
+                "context": "Can't find repository name in issue body.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\n\nmy repo",
+            {
+                "result": "caught expected error",
+                "error": "IssueBodyParseError",
+                "context": "Repository name can't be empty.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\nmy repo\n\n",
+            {
+                "result": "caught expected error",
+                "error": "IssueBodyParseError",
+                "context": "Repository name can't be empty.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\nmy repo\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryInformationValidationError",
+                "context": "Name can only contain letters, digits, hyphens, underscores and dots.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\nmy-repo; sudo rm -rf /\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryInformationValidationError",
+                "context": "Name can only contain letters, digits, hyphens, underscores and dots.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\n-my-repo\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryInformationValidationError",
+                "context": "Name can't start or end with hyphen.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\nmy-repo-\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryInformationValidationError",
+                "context": "Name can't start or end with hyphen.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\n.my-repo\n",
             {
                 "result": "caught expected error",
                 "error": "RepositoryInformationValidationError",
                 "context": "Name can't start or end with dot.",
             },
-            False,
+            True,
             False,
             False,
         ),
         (
-            "### Repository name\n\nmy-repository; sudo rm -rf /\n",
+            "### Repository name\n\nmy-repo.\n",
             {
                 "result": "caught expected error",
                 "error": "RepositoryInformationValidationError",
-                "context": "Name can only contain letters, digits, hyphens, underscores and dots.",
+                "context": "Name can't start or end with dot.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            f"### Repository name\n\n{'a' * 101}\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryInformationValidationError",
+                "context": "Name must be between 1 and 100 characters.",
+            },
+            True,
+            False,
+            False,
+        ),
+        (
+            "### Repository name\n\nmy-repository-2\n",
+            {
+                "result": "caught expected error",
+                "error": "RepositoryDoesNotExistError",
+                "context": "Can't find [mock/my-repository-2] repository.",
             },
             False,
             False,

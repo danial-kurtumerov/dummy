@@ -5,35 +5,24 @@ if TYPE_CHECKING:
 
 
 class RepositoryInformationParserInterface(Protocol):
-
-    async def execute(self, issue_body: str) -> RepositoryInformationValueObject:
-        ...
+    async def execute(self, issue_body: str) -> RepositoryInformationValueObject: ...
 
 
 class RepositoryInformationValidatorInterface(Protocol):
-
-    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
-        ...
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None: ...
 
 
 class CheckRepositoryExistenceInterface(Protocol):
-
-    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
-        ...
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None: ...
 
 
 class IssueMessageSenderInterface(Protocol):
+    async def execute(self, message: dict[str, str]) -> None: ...
 
-    async def execute(self, message: dict[str, str]) -> None:
-        ...
 
 class CloseIssueInterface(Protocol):
-
-    async def execute(self) -> None:
-        ...
+    async def execute(self) -> None: ...
 
 
 class AWSUpdaterInterface(Protocol):
-
-    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
-        ...
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None: ...

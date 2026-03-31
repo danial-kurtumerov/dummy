@@ -12,8 +12,6 @@ if TYPE_CHECKING:
 
 
 class RepositoryInformationParserGateway:
-
-
     async def execute(self, issue_body: str) -> RepositoryInformationValueObject:
         lines: list[str] = issue_body.splitlines()
 
@@ -34,8 +32,8 @@ class RepositoryInformationParserGateway:
 
         return name
 
-class RepositoryInformationValidatorGateway:
 
+class RepositoryInformationValidatorGateway:
     _min_length: int = 1
     _max_length: int = 100
 
@@ -61,7 +59,6 @@ class RepositoryInformationValidatorGateway:
 
 
 class CheckRepositoryExistenceGateway:
-
     _organization: str = "danial-kurtumerov"
     _not_found_status: int = 404
 
@@ -84,7 +81,6 @@ class CheckRepositoryExistenceGateway:
 
 
 class IssueMessageSenderGateway:
-
     def __init__(
         self,
         repository_name: str,
@@ -98,7 +94,6 @@ class IssueMessageSenderGateway:
 
 
 class CloseIssueGateway:
-
     _state: str = "closed"
 
     def __init__(
@@ -112,8 +107,8 @@ class CloseIssueGateway:
     async def execute(self) -> None:
         self._issue.edit(state=self._state)
 
-class AWSUpdaterGateway:
 
+class AWSUpdaterGateway:
     async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
         if repository_information_value_object:
             ...

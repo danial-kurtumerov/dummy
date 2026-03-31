@@ -7,7 +7,6 @@ if TYPE_CHECKING:
 
 
 class CheckRepositoryExistenceMock:
-
     _organization: str = "mock"
 
     def __init__(
@@ -34,8 +33,8 @@ class CheckRepositoryExistenceMock:
     def result(self, value: bool) -> None:
         self._result = value
 
-class IssueMessageSenderMock:
 
+class IssueMessageSenderMock:
     def __init__(
         self,
         repository_name: str,
@@ -56,7 +55,6 @@ class IssueMessageSenderMock:
 
 
 class CloseIssueMock:
-
     def __init__(
         self,
         repository_name: str,
@@ -77,7 +75,6 @@ class CloseIssueMock:
 
 
 class AWSUpdaterMock:
-
     def __init__(self) -> None:
         self._result: bool = False
 

@@ -13,7 +13,6 @@ from src.infrastructure.gateways import (
 
 
 class CommandLineInterfaceController:
-
     def __init__(
         self,
         onboard_repository_use_case: OnboardRepositoryUseCase,
@@ -22,6 +21,7 @@ class CommandLineInterfaceController:
 
     def __call__(self, issue_body: str) -> None:
         run(self._onboard_repository_use_case.execute(issue_body))
+
 
 if __name__ == "__main__":
     repository_name: str = environ.get("REPO_NAME", "")
