@@ -1,9 +1,98 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
-from src.application.use_cases import OnboardRepositoryUseCase
-from src.infrastructure.gateways import RepositoryInformationParserGateway, RepositoryInformationValidatorGateway
-from src.presentation.controllers import CommandLineInterfaceController
-from tests.mocks.gateways import AWSUpdaterMock, CheckRepositoryExistenceMock, CloseIssueMock, IssueMessageSenderMock
+from scripts.onboarding import (
+    CommandLineInterfaceController,
+    OnboardRepositoryUseCase,
+    RepositoryInformationParserGateway,
+    RepositoryInformationValidatorGateway,
+    RepositoryDoesNotExistError
+)
+
+if TYPE_CHECKING:
+    from scripts.onboarding import RepositoryInformationValueObject
+
+
+class CheckRepositoryExistenceMock:
+    _organization: str = "mock"
+
+    def __init__(
+        self,
+        token: str,
+    ) -> None:
+        if token:
+            ...
+
+        self._result: bool = True
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        path: str = f"{self._organization}/{repository_information_value_object.name}"
+
+        if not self._result:
+            msg: str = f"Can't find [{path}] repository."
+            raise RepositoryDoesNotExistError(msg)
+
+    @property
+    def result(self) -> bool:
+        return self._result
+
+    @result.setter
+    def result(self, value: bool) -> None:
+        self._result = value
+
+
+class IssueMessageSenderMock:
+    def __init__(
+        self,
+        repository_name: str,
+        issue_number: int,
+        token: str,
+    ) -> None:
+        if repository_name and issue_number and token:
+            ...
+
+        self._result: dict = {}
+
+    async def execute(self, message: dict[str, str]) -> None:
+        self._result = message
+
+    @property
+    def result(self) -> dict[str, str]:
+        return self._result
+
+
+class CloseIssueMock:
+    def __init__(
+        self,
+        repository_name: str,
+        issue_number: int,
+        token: str,
+    ) -> None:
+        if repository_name and issue_number and token:
+            ...
+
+        self._result: bool = False
+
+    async def execute(self) -> None:
+        self._result = True
+
+    @property
+    def result(self) -> bool:
+        return self._result
+
+
+class AWSUpdaterMock:
+    def __init__(self) -> None:
+        self._result: bool = False
+
+    @property
+    def result(self) -> bool:
+        return self._result
+
+    async def execute(self, repository_information_value_object: RepositoryInformationValueObject) -> None:
+        if repository_information_value_object:
+            self._result = True
 
 
 @pytest.fixture
