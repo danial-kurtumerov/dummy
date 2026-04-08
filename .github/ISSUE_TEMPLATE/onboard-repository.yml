@@ -12,25 +12,32 @@ body:
 - type: markdown
   attributes:
     value: |
-      For github organization `my-company` only. This Issue will be processed
-      automatically. Once completed, your repository will added to the `Role`
-      AWS role, and an AWS ECR repository will be created for you. This ECR
-      repository will store your built container images, allowing you to use
-      `company/onboarding-repo/.github/actions/ecr-build-and-push@main` in your
-      CI/CD pipeline. The processing of this Issue follows these steps:
-      1. Grant Read Access: You provide read access to your repository so we
-      can verify it exists. This helps us avoid typos and prevents AWS from
-      being cluttered with records for non-existent repositories.
-      2. Fill the Template: You complete the provided Issue template.
-      3. Automated Validation: We verify the data you've entered. If an error
-      is detected, the github-actions bot will leave a comment explaining the
-      cause. If this happens, simply edit the existing Issue to restart the
-      process - there is no need to close it and open a new one.
-      4. AWS Update & Completion: Once the data is confirmed as correct, we
-      will update the AWS records. The github-actions bot will post a success
-      comment and close the Issue as completed.
-      Note: You can typically expect to see a comment from the bot within two
+      # 📦 Onboard repository
+      
+      Once completed, your repository will added to the `Role` AWS role, and an
+      AWS ECR repository will be created for you. This ECR repository will store
+      your built container images, allowing you to use (ecr-build-and-push)[https://github.com/company/repository/blob/feat/onboarding_action/.github/actions/ecr-build-and-push/action.yml]
+      action in your CI/CD pipeline. 
+      
+      ** Processing flow:**
+      1. You provide read access to your repository so we can verify it exists.
+      This helps us avoid typos and prevents AWS from being cluttered with
+      records for non-existent repositories.
+      2. You complete the provided Issue template.
+      3. We verify the data you've entered. If an error is detected, the
+      github-actions bot will leave a comment explaining the cause. If this
+      happens, simply edit the existing Issue to restart the process - there is
+      no need to close it and open a new one.
+      4. Once the data is confirmed as correct, we will update the AWS records.
+      The github-actions bot will post a success comment and close the Issue as
+      completed.
+      
+      **Notes:**
+
+      1. You can typically expect to see a comment from the bot within two
       minutes of creating the Issue.
+      2. For github organization `my-company` only.
+      3. This Issue will be processed automatically.
 
 - type: input
   id: repository_name
