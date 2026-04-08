@@ -14,7 +14,7 @@ body:
     value: |
       # 📦 Onboard repository
       
-      Once completed, your repository will be added to the `Role` AWS role, and an AWS ECR repository will be created for you. This ECR repository will store your container images, allowing you to use [ecr-build-and-push](https://github.com/company/repository/blob/feat/onboarding_action/.github/actions/ecr-build-and-push/action.yml) action in your CI/CD pipeline. 
+      Once completed, your repository will be added to the `Role` AWS role, and an AWS ECR repository will be created for you. This will allow you to use [ecr-build-and-push](https://github.com/company/repository/blob/feat/onboarding_action/.github/actions/ecr-build-and-push/action.yml) action in your CI/CD pipeline. 
       
       **🔧⚙️ Processing flow:**
       1. You provide read access to your repository so we can verify it exists. This helps us avoid typos and prevents AWS from being cluttered with records for non-existent repositories.
