@@ -20,7 +20,7 @@ body:
       1. You provide read access to your repository so we can verify it exists. This helps us avoid typos and prevents AWS from being cluttered with records for non-existent repositories.
       2. You complete the provided Issue template.
       3. We verify the data you've entered. If an error is detected, the `github-actions bot` will leave a comment explaining the cause. If this happens, simply edit the existing Issue to restart the process - there is no need to close it and open a new one.
-      4. Once the data is confirmed as correct, we will update the AWS records. The github-actions bot will post a success comment and close the Issue as completed.
+      4. Once the data is confirmed as correct, we will update the AWS records. The `github-actions bot` will post a success comment and close the Issue as completed.
       
       **☝️🤓 Notes:**
 
