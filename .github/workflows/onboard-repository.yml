@@ -8,6 +8,7 @@ jobs:
   onboard-repository:
     name: "onboard-repository"
     runs-on: ['ubuntu-24.04']
+    environment: onboarding-approval
 
     env:
       ONBOARD_REPO_EVENT: ${{ github.event_name }}
